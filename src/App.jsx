@@ -8,13 +8,13 @@ function App() {
   const expenses = [
     {
       date: new Date(2024, 10, 12),
-      title: 'New book',
-      price: 30.99
+      title: 'How to get 50000 dollars book',
+      price: 50000
     },
     {
       date: new Date(2024, 10, 12),
-      title: 'New jeans',
-      price: 99.99
+      title: '(Brick) jeans',
+      price: 0.99
     }
   ]
 
