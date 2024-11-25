@@ -4,11 +4,15 @@ import './Expenses.css'
 
 
 const Expenses = (props) => {
-    console.log(props.expenses[1])
+    const expenses = props.expenses
+    console.log(expenses)
+
+    
     return (
         <Card className="expenses">
-            <ExpenseItem expenseData={props.expenses[0]}/>
-            <ExpenseItem expenseData={props.expenses[1]}/>
+            {expenses.map((expense, index) => (
+                <ExpenseItem key={expense.id || index} expenseData={expense} />
+            ))}
         </Card>
     )
 }
