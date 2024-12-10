@@ -1,12 +1,16 @@
 import './ExpenseForm.css'
-import { useState } from 'react'
+import { Fragment, useRef, useState } from 'react'
+import Error from '../../UI/Error'
 
 
 const ExpenseForm = (props) => {
 
-    const [enteredTitle, setEnteredTitle] = useState('')
-    const [enteredPrice, setEnteredPrice] = useState('')
-    const [enteredDate, setEnteredDate] = useState('')
+    const [error, setError] = useState(null)
+    console.log(error)
+
+    const titleInputRef = useRef()
+    const amountInputRef = useRef()
+    const dateInputRef = useRef()
 
     const titleChangeHandler = (event) => {
         setEnteredTitle(event.target.value)
@@ -18,59 +22,74 @@ const ExpenseForm = (props) => {
         setEnteredDate(event.target.value)
     }
     
-    const submitHandler = (event) => {
-        event.preventDefault()
-        const expenseData = {
-            title: enteredTitle,
-            price: enteredPrice,
-            date: new Date(enteredDate)            
-        }
-        props.onSaveExpenseData(expenseData)
-        setEnteredTitle('')
-        setEnteredPrice('')
-        setEnteredDate('')
-    }
-
     const CancelHandler = () => {
         props.onCancel()
-        setEnteredTitle('')
-        setEnteredPrice('')
-        setEnteredDate('')
     }
 
+    const errorHandler = () => {
+        setError(null)
+    }
 
-    return (
-        <form onSubmit={submitHandler} >
-            <div className="new-expense__controls">
-                <div className="new-expense__control">
-                    <label> Title</label>
-                    <input type="text"
-                    onChange={titleChangeHandler}
-                    value={enteredTitle}
-                    required/>
-                </div>
-                <div className="new-expense__control">
-                    <label>Price</label>
-                    <input type="number" min="0.01" step="0.01"
-                    onChange={priceChangeHandler}
-                    value={enteredPrice}
-                    required/>
-                </div>
-                <div className="new-expense__control">
-                    <label>Date</label>
-                    <input type="date" min="2024-11-12" max="2026-01-31"
-                    onChange={dateChangeHandler}
-                    value={enteredDate}
-                    required/>
-                </div>
+    const submitHandler = (event) => {
+        const enteredTitle = titleInputRef.current.value
+        const enteredAmount = amountInputRef.current.value
+        const enteredDate = dateInputRef.current.value
+
+        event.preventDefault()
+        if(enteredTitle.trim().length == 0 
+        || enteredAmount.trim().length == 0 
+        || enteredDate.trim().length == 0){
+            setError({
+                title: 'Invalid input',
+                message: 'Please enter a valid title, price and date (No empty values)'
+            })
+            return
+        }
+
+    };
+
+    return(
+        <Fragment>
+            {error && (
+                <Error 
+                    title={error.title}
+                    message={error.message}
+                    onConfirm={errorHandler}
+                />
+            )}
+            <div>
+                <form onSubmit={submitHandler} >
+                    <div className="new-expense__controls">
+                        <div className="new-expense__control">
+                            <label>Title</label>
+                            <input type="text"
+                            id="title"
+                            ref={titleInputRef}
+                            />
+                        </div>
+                        <div className="new-expense__control">
+                            <label>Price</label>
+                            <input type="number" min="0.01" step="0.01"
+                            id="amount"
+                            ref={amountInputRef}
+                            />
+                        </div>
+                        <div className="new-expense__control">
+                            <label>Date</label>
+                            <input type="date" min="2024-11-12" max="2026-01-31"
+                            id="date"
+                            ref={dateInputRef}
+                            />
+                        </div>
+                    </div>
+                    <div className="new-expense__actions">
+                        <button type="submit">Add Expense</button>
+                        <button onClick={CancelHandler}>Cancel</button>
+                    </div>
+                </form>
             </div>
-            <div className="new-expense__actions">
-                <button type="submit">Add Expense</button>
-                <button onClick={CancelHandler}>Cancel</button>
-            </div>
-        </form>
+        </Fragment>
     )
 }
-
 
 export default ExpenseForm;

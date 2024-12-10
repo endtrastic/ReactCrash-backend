@@ -22,8 +22,19 @@ const DUMMY_EXPENSES = [
     date: new Date(2025, 5, 22),
     title: 'Prisma Paper Bag',
     price: -1000,
+  },
+  {
+    id: 'id4',
+    date: new Date(2024, 3, 10),
+    title: 'Otokars laptop',
+    price: 2.99,
+  },
+  {
+    id: 'id5',
+    date: new Date(2023, 7, 30),
+    title: 'Mykhailos phone',
+    price: 30,
   }
-
 ]
 
 
