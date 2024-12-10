@@ -1,7 +1,7 @@
 import './App.css'
 import Expenses from './components/Expenses/Expenses.jsx'
 import NewExpense from './components/Expenses/NewExpense/NewExpense.jsx'
-import { useState, useEffect } from 'react'
+import React, { Fragment, useState, useEffect } from 'react'
 
 
 const DUMMY_EXPENSES = [
@@ -39,15 +39,40 @@ const DUMMY_EXPENSES = [
 
 
 const App = () => {
-  const [expenses, setExpenses] = useState(() => {
-    const expensesFromLS = JSON.parse(localStorage.getItem('expenses'));
-    return expensesFromLS || [];
-  })
+    const[isFetching, setIsFetching] = useState(false)
+    const [expenses, setExpenses] = useState([])
+    const [error, setError] = useState(null)
+    const [showError, setShowError] = useState(false)
 
+    useEffect(() => {
 
-  useEffect(() => {
-    localStorage.setItem('expenses', JSON.stringify(expenses));
-  }, [expenses]);
+      const getExpenses = async () => {
+          setIsFetching(true)
+          try {
+              const response = await fetch('http://localhost:3008/expenses')
+              const responseData = await response.json()
+              if(!response.ok){
+                throw new Error('Failed fetching data')
+              }
+              setExpenses(responseData.expenses)
+          } catch (error) {
+            setError({
+              title: 'An error occured!',
+              message: 'Failed fetching expenses data, please try again later'
+            })
+            setIsFetching(true)
+          }
+          setIsFetching(false)
+      }
+      getExpenses()
+      console.log(expenses)
+    }, [])
+    
+  console.log(error)
+  const errorHandler = () => {
+    setError(null)
+    setShowError(null)
+  }  
 
   const addExpenseHandler = (expense) => {
     console.log('In App.js')
@@ -59,8 +84,19 @@ const App = () => {
 
   return (
     <div className="App">
+        { showError && (
+          <Error
+            title={error.title}
+            message={error.message}
+            onConfirm={errorHandler}
+          
+          />)
+        }
         <NewExpense onAddExpense={addExpenseHandler}/>
-        <Expenses expenses={expenses}/>
+        <Expenses 
+        expenses={expenses}
+        isLoading={isFetching}
+        />
     </div>
   )
 }
