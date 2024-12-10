@@ -12,16 +12,6 @@ const ExpenseForm = (props) => {
     const amountInputRef = useRef()
     const dateInputRef = useRef()
 
-    const titleChangeHandler = (event) => {
-        setEnteredTitle(event.target.value)
-    }
-    const priceChangeHandler = (event) => {
-        setEnteredPrice(event.target.value)
-    }
-    const dateChangeHandler = (event) => {
-        setEnteredDate(event.target.value)
-    }
-    
     const CancelHandler = () => {
         props.onCancel()
     }
@@ -31,20 +21,34 @@ const ExpenseForm = (props) => {
     }
 
     const submitHandler = (event) => {
+        event.preventDefault()
         const enteredTitle = titleInputRef.current.value
         const enteredAmount = amountInputRef.current.value
         const enteredDate = dateInputRef.current.value
-
-        event.preventDefault()
-        if(enteredTitle.trim().length == 0 
-        || enteredAmount.trim().length == 0 
-        || enteredDate.trim().length == 0){
+        
+        
+        if (
+        enteredTitle.trim().length == 0 || 
+        enteredAmount.trim().length == 0 ||
+        enteredDate.trim().length == 0
+        ) {
             setError({
                 title: 'Invalid input',
                 message: 'Please enter a valid title, price and date (No empty values)'
             })
             return
         }
+    
+        props.onSaveExpenseData({
+            title: enteredTitle,
+            price: enteredAmount,
+            date: new Date(enteredDate),
+        });
+
+        titleInputRef.current.value = "";
+        amountInputRef.current.value = "";
+        dateInputRef.current.value = "";
+        CancelHandler()
 
     };
 

@@ -1,7 +1,7 @@
 import './App.css'
 import Expenses from './components/Expenses/Expenses.jsx'
 import NewExpense from './components/Expenses/NewExpense/NewExpense.jsx'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 
 const DUMMY_EXPENSES = [
@@ -39,8 +39,15 @@ const DUMMY_EXPENSES = [
 
 
 const App = () => {
-  const [expenses, setExpenses] = useState(DUMMY_EXPENSES)
+  const [expenses, setExpenses] = useState(() => {
+    const expensesFromLS = JSON.parse(localStorage.getItem('expenses'));
+    return expensesFromLS || [];
+  })
 
+
+  useEffect(() => {
+    localStorage.setItem('expenses', JSON.stringify(expenses));
+  }, [expenses]);
 
   const addExpenseHandler = (expense) => {
     console.log('In App.js')
