@@ -2,6 +2,7 @@ import './App.css'
 import Expenses from './components/Expenses/Expenses.jsx'
 import NewExpense from './components/Expenses/NewExpense/NewExpense.jsx'
 import React, { Fragment, useState, useEffect } from 'react'
+import Error from "./components/UI/Error.jsx"
 
 
 const DUMMY_EXPENSES = [
@@ -49,7 +50,7 @@ const App = () => {
       const getExpenses = async () => {
           setIsFetching(true)
           try {
-              const response = await fetch('http://localhost:3008/expenses')
+              const response = await fetch('http://localhost:3008/expensesss')
               const responseData = await response.json()
               if(!response.ok){
                 throw new Error('Failed fetching data')
@@ -60,7 +61,7 @@ const App = () => {
               title: 'An error occured!',
               message: 'Failed fetching expenses data, please try again later'
             })
-            setIsFetching(true)
+            setShowError(true)
           }
           setIsFetching(false)
       }
@@ -71,12 +72,10 @@ const App = () => {
   console.log(error)
   const errorHandler = () => {
     setError(null)
-    setShowError(null)
+    setShowError(false)
   }  
 
   const addExpenseHandler = (expense) => {
-    console.log('In App.js')
-    console.log(expense)
     setExpenses((previousExpenses) => {
       return [expense, ...previousExpenses]
     })
